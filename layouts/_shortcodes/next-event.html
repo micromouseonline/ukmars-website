@@ -1,0 +1,20 @@
+{{/*
+  Hero badge linking to the next upcoming event (by event_end >= now).
+  Falls back to a link to /events-page/ when no event is upcoming.
+  Usage: {{< next-event >}}
+*/}}
+{{- $tz := "Europe/London" -}}
+{{- $next := dict -}}
+{{- with site.GetPage "/events" -}}
+  {{- range .RegularPages -}}
+    {{- $s := time.AsTime .Params.event_start $tz -}}
+    {{- $e := time.AsTime (.Params.event_end | default .Params.event_start) $tz -}}
+    {{- if $e.After now -}}
+      {{- if or (not $next.page) ($s.Before $next.start) }}{{ $next = dict "page" . "start" $s }}{{ end -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+{{- $href := "/events-page/" -}}
+{{- $text := "See upcoming events" -}}
+{{- with $next.page }}{{ $href = .RelPermalink }}{{ $text = printf "Next event: %s, %s" .Title ($next.start.Format "2 January 2006") }}{{ end -}}
+<a href="{{ $href }}" class="not-prose hx:inline-flex hx:items-center hx:rounded-full hx:gap-2 hx:px-3 hx:py-1 hx:text-xs hx:text-gray-600 hx:dark:text-gray-400 hx:bg-gray-100 hx:dark:bg-neutral-800 hx:border-gray-200 hx:dark:border-neutral-800 hx:border hx:hover:border-gray-400 hx:dark:hover:text-gray-50 hx:dark:hover:border-gray-600 hx:transition-all hx:ease-in hx:duration-200"><span class="hx:w-2 hx:h-2 hx:rounded-full hx:bg-primary-400"></span><span>{{ $text }}</span></a>

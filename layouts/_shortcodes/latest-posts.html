@@ -1,0 +1,12 @@
+{{/*
+  List the most recent news posts (section "posts"), newest first.
+  Usage: {{< latest-posts limit="5" >}}
+*/}}
+{{- $limit := int (.Get "limit" | default 5) -}}
+{{- with site.GetPage "/posts" -}}
+<ul class="ukmars-event-list">
+  {{- range first $limit .RegularPages.ByDate.Reverse }}
+  <li><span class="ukmars-event-date">{{ .Date.Format "2 Jan 2006" }}</span><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>
+  {{- end }}
+</ul>
+{{- end -}}

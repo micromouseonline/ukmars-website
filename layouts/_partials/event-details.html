@@ -1,0 +1,19 @@
+{{/*
+  Event date/time, location and category box for a single event page.
+  Context: the event page. Uses event_start, event_end, location, event_categories.
+*/}}
+{{- $tz := "Europe/London" -}}
+{{- $s := time.AsTime .Params.event_start $tz -}}
+{{- $e := time.AsTime (.Params.event_end | default .Params.event_start) $tz -}}
+<div class="ukmars-event-details">
+  <p><strong>When:</strong>
+    {{ $s.Format "Monday 2 January 2006" }}{{ if ne ($s.Format "2006-01-02") ($e.Format "2006-01-02") }} - {{ $e.Format "Monday 2 January 2006" }}{{ end }},
+    {{ $s.Format "15:04" }} - {{ $e.Format "15:04" }}
+  </p>
+  {{- with .Params.location }}<p><strong>Where:</strong> {{ . }}</p>{{ end }}
+  {{- with .GetTerms "event_categories" }}
+  <p><strong>Category:</strong>
+    {{ range $i, $t := . }}{{ if $i }}, {{ end }}<a href="{{ $t.RelPermalink }}">{{ $t.LinkTitle }}</a>{{ end }}
+  </p>
+  {{- end }}
+</div>

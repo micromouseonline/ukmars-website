@@ -1,0 +1,47 @@
+{{/*
+  Render a list of events from the "events" section.
+
+  Context: dict with keys
+    scope    "upcoming" (end >= now, soonest first), "past" (newest first) or "all" (newest first). Default "all".
+    category optional event_categories name to filter on, e.g. "Public Events".
+    limit    optional max number of events.
+
+  Event front matter used: title, event_start, event_end (local Europe/London, no offset),
+  location, event_categories.
+*/}}
+{{- $scope := .scope | default "all" -}}
+{{- $tz := "Europe/London" -}}
+{{- $now := now -}}
+{{- $events := slice -}}
+{{- with site.GetPage "/events" -}}
+  {{- range .RegularPages -}}
+    {{- $start := time.AsTime .Params.event_start $tz -}}
+    {{- $end := time.AsTime (.Params.event_end | default .Params.event_start) $tz -}}
+    {{- $keep := true -}}
+    {{- if eq $scope "upcoming" }}{{ $keep = $end.After $now }}{{ end -}}
+    {{- if eq $scope "past" }}{{ $keep = not ($end.After $now) }}{{ end -}}
+    {{- if and $keep $.category -}}
+      {{- $keep = in (.Params.event_categories | default slice) $.category -}}
+    {{- end -}}
+    {{- if $keep }}{{ $events = $events | append (dict "page" . "start" $start "end" $end) }}{{ end -}}
+  {{- end -}}
+{{- end -}}
+{{- $events = sort $events "start" (cond (eq $scope "upcoming") "asc" "desc") -}}
+{{- with $.limit }}{{ $events = first . $events }}{{ end -}}
+{{- if $events -}}
+<ul class="ukmars-event-list">
+  {{- range $events -}}
+  {{- $sameDay := eq (.start.Format "2006-01-02") (.end.Format "2006-01-02") -}}
+  <li>
+    <span class="ukmars-event-date">
+      {{- .start.Format "Mon 2 Jan 2006" -}}
+      {{- if not $sameDay }} - {{ .end.Format "Mon 2 Jan 2006" }}{{ end -}}
+    </span>
+    <a href="{{ .page.RelPermalink }}">{{ .page.Title }}</a>
+    {{- with .page.Params.location }}<span class="ukmars-event-meta">{{ . }}</span>{{ end -}}
+  </li>
+  {{- end -}}
+</ul>
+{{- else -}}
+<p>No {{ if ne $scope "all" }}{{ $scope }} {{ end }}events.</p>
+{{- end -}}

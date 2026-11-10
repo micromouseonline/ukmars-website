@@ -1,0 +1,7 @@
+{{/*
+  Event list shortcode. Wraps partial event-list.html.
+  Usage: {{< event-list scope="upcoming|past|all" category="Public Events" limit="5" >}}
+*/}}
+{{- $limit := 0 -}}
+{{- with .Get "limit" }}{{ $limit = int . }}{{ end -}}
+{{- partial "event-list.html" (dict "scope" (.Get "scope") "category" (.Get "category") "limit" $limit "page" .Page) -}}

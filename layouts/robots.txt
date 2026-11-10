@@ -1,0 +1,4 @@
+{{- /* Disallow all crawling while params.preview is true (pre-cutover preview). */ -}}
+User-agent: *
+{{ if site.Params.preview }}Disallow: /{{ else }}Allow: /
+Sitemap: {{ "sitemap.xml" | absURL }}{{ end }}

@@ -1,0 +1,107 @@
+# UKMARS Hugo site, Hextra theme (themes/hextra, v0.13.0, git clone).
+baseURL: https://ukmars.org/
+locale: en-gb
+title: UKMARS
+theme: hextra
+timeZone: Europe/London
+buildFuture: true          # upcoming events are future-dated
+enableRobotsTXT: true
+enableGitInfo: false
+
+taxonomies:
+  category: categories
+  tag: tags
+  event_category: event_categories
+permalinks:
+  event_categories: /events/categories/:slug/
+
+outputs:
+  home: [html]
+  page: [html]
+  section: [html, rss]
+
+markup:
+  goldmark:
+    renderer:
+      unsafe: true         # some tables/embeds remain raw HTML
+    parser:
+      attribute:
+        title: true        # heading {#id} anchors from old site
+  highlight:
+    noClasses: false
+
+menu:
+  main:
+    - name: Who We Are
+      pageRef: /about
+      weight: 1
+    - name: What We Do
+      pageRef: /contests
+      weight: 2
+    - name: Events
+      pageRef: /events-page
+      weight: 3
+    - name: Get Started
+      pageRef: /projects
+      weight: 4
+    - name: Resources
+      pageRef: /resources
+      weight: 5
+    - name: News
+      url: /blog/
+      weight: 6
+    - name: Search
+      weight: 7
+      params:
+        type: search
+
+params:
+  preview: true            # see cascade block at end; robots.txt disallows all
+  description: UK Micromouse and Robotics Society
+  navbar:
+    displayTitle: true
+    displayLogo: true
+    logo:
+      path: ukmars/wp-content/uploads/2020/07/ukmars-135.png
+      width: 40
+      height: 32
+    width: wide
+  theme:
+    default: system
+    displayToggle: true
+  footer:
+    enable: true
+    displayCopyright: true
+    displayPoweredBy: false
+  displayUpdatedDate: true
+  dateFormat: "2 January 2006"
+  search:
+    enable: true
+    type: flexsearch
+    flexsearch:
+      index: content
+      tokenize: forward
+  editURL:
+    enable: false
+  blog:
+    list:
+      displayTags: true
+      sortBy: date
+      sortOrder: desc
+      pagerSize: 20
+    article:
+      displayPagination: true
+  page:
+    width: normal
+    contextMenu:
+      enable: false
+  highlight:
+    copy:
+      enable: true
+      display: hover
+
+# PREVIEW MODE: keep search engines away until ukmars.org is switched over.
+# At cutover delete this cascade block and set params.preview to false.
+cascade:
+  - params:
+      noindex: true

@@ -1,0 +1,15 @@
+{{/*
+  Figure with caption. Replaces Hugo's built-in figure so that site-root
+  paths ("/ukmars/...") respect a baseURL with a sub-path (GitHub Pages preview).
+  Params: src (required), alt, caption, link.
+*/}}
+{{- $src := .Get "src" -}}
+{{- if hasPrefix $src "/" }}{{ $src = relURL (strings.TrimPrefix "/" $src) }}{{ end -}}
+{{- $link := .Get "link" -}}
+{{- if hasPrefix $link "/" }}{{ $link = relURL (strings.TrimPrefix "/" $link) }}{{ end -}}
+<figure>
+  {{- if $link }}<a href="{{ $link }}">{{ end -}}
+  <img src="{{ $src }}" alt="{{ .Get "alt" }}" loading="lazy" />
+  {{- if $link }}</a>{{ end -}}
+  {{- with .Get "caption" }}<figcaption>{{ . | markdownify }}</figcaption>{{ end }}
+</figure>
